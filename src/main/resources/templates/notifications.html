@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'Notifications', '')}">
+<main>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="font-display text-3xl font-black">Notifications</h1>
+        <form th:action="@{/notifications/read-all}" method="post">
+            <button class="nb-btn nb-btn-light text-sm">Mark all read</button>
+        </form>
+    </div>
+
+    <div class="space-y-3" th:if="${!notifications.isEmpty()}">
+        <a th:each="n : ${notifications}" th:href="${n.linkUrl} ?: '#'"
+           class="block bg-white neobrutal-border neobrutal-shadow-sm p-4 hover-lift"
+           th:classappend="${!n.read} ? 'border-l-[8px]' : ''">
+            <div class="flex items-start gap-3">
+                <span class="material-symbols-outlined p-2 neobrutal-border-2 bg-surface-container shrink-0"
+                      th:text="${n.type.name() == 'FINE' ? 'payments'
+                              : (n.type.name() == 'REQUEST_REJECTED' ? 'cancel'
+                              : (n.type.name() == 'REQUEST_APPROVED' ? 'check_circle'
+                              : (n.type.name() == 'DUE_REMINDER' ? 'schedule' : 'notifications')))}">notifications</span>
+                <div class="min-w-0 flex-grow">
+                    <div class="flex justify-between gap-2">
+                        <p class="font-bold" th:text="${n.title}">Title</p>
+                        <span class="text-xs text-secondary whitespace-nowrap" th:text="${n.createdDate}">date</span>
+                    </div>
+                    <p class="text-sm text-on-surface-variant" th:text="${n.message}">message</p>
+                </div>
+                <span th:if="${!n.read}" class="w-2.5 h-2.5 bg-primary rounded-full mt-1 shrink-0"></span>
+            </div>
+        </a>
+    </div>
+    <div th:if="${notifications.isEmpty()}" th:replace="~{fragments/ui :: empty('No notifications yet.')}"></div>
+</main>
+</html>

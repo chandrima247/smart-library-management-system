@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Flash banners (error / success), driven by RedirectAttributes flash scope. -->
+<div th:fragment="flash">
+    <div th:if="${errorMessage}" data-dismissable data-autohide
+         class="nb-alert bg-danger text-white p-4 mb-6 flex items-center gap-3">
+        <span class="material-symbols-outlined filled">report</span>
+        <p class="font-bold flex-grow" th:text="${errorMessage}">Error</p>
+        <button data-dismiss type="button"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div th:if="${successMessage}" data-dismissable data-autohide
+         class="nb-alert bg-success text-white p-4 mb-6 flex items-center gap-3">
+        <span class="material-symbols-outlined filled">check_circle</span>
+        <p class="font-bold flex-grow" th:text="${successMessage}">Success</p>
+        <button data-dismiss type="button"><span class="material-symbols-outlined">close</span></button>
+    </div>
+</div>
+
+<!-- Statistic card. color = tailwind bg utility for the icon chip. -->
+<div th:fragment="statCard(label, value, icon, color)"
+     class="bg-white neobrutal-border neobrutal-shadow p-6 hover-lift">
+    <div class="flex justify-between items-start mb-4">
+        <div th:classappend="${color}" class="p-3 neobrutal-border inline-flex text-white">
+            <span class="material-symbols-outlined filled" th:text="${icon}">tag</span>
+        </div>
+        <span class="font-display text-4xl font-black" th:text="${value}">0</span>
+    </div>
+    <p class="text-xs font-bold uppercase tracking-widest text-secondary" th:text="${label}">Label</p>
+</div>
+
+<!-- Empty-state placeholder. -->
+<div th:fragment="empty(message)" class="text-center py-16 border-[3px] border-dashed border-outline-variant">
+    <span class="material-symbols-outlined text-5xl text-gray-inactive">inbox</span>
+    <p class="font-bold text-secondary mt-2" th:text="${message}">Nothing here yet.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'Search Books', 'search')}">
+<main>
+    <section class="mb-6">
+        <h1 class="font-display text-3xl font-black">Search the Catalogue</h1>
+        <p class="text-secondary mt-1">Find a title and request it for home borrow or in-library reading.</p>
+    </section>
+
+    <form th:action="@{/student/search}" method="get"
+          class="bg-white neobrutal-border neobrutal-shadow p-4 mb-8 flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-grow">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+            <input class="nb-input pl-11" type="text" name="q" th:value="${q}"
+                   placeholder="Title, author, ISBN or category"/>
+        </div>
+        <select class="nb-input sm:w-56" name="category">
+            <option value="">All categories</option>
+            <option th:each="c : ${categories}" th:value="${c}" th:text="${c}" th:selected="${c == category}"></option>
+        </select>
+        <button class="nb-btn nb-btn-primary" type="submit">Search</button>
+    </form>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+        <th:block th:each="bv : ${books}">
+            <div th:replace="~{student/_bookcard :: card(${bv})}"></div>
+        </th:block>
+    </div>
+    <div th:if="${books.isEmpty()}" th:replace="~{fragments/ui :: empty('No titles match your search.')}"></div>
+
+    <!-- Pagination -->
+    <div th:if="${pageInfo.totalPages > 1}" class="flex justify-center items-center gap-3 mt-8">
+        <a th:if="${!pageInfo.first}" class="nb-btn nb-btn-light"
+           th:href="@{/student/search(q=${q}, category=${category}, page=${pageInfo.number - 1})}">Prev</a>
+        <span class="font-bold" th:text="'Page ' + (${pageInfo.number} + 1) + ' of ' + ${pageInfo.totalPages}">Page</span>
+        <a th:if="${!pageInfo.last}" class="nb-btn nb-btn-light"
+           th:href="@{/student/search(q=${q}, category=${category}, page=${pageInfo.number + 1})}">Next</a>
+    </div>
+</main>
+</html>

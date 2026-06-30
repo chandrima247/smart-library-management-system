@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/authlayout :: auth(~{::main}, 'Error')}">
+<main>
+    <div class="w-full max-w-md text-center">
+        <section class="bg-background neobrutal-border neobrutal-shadow p-10">
+            <div class="inline-flex p-4 bg-danger text-white neobrutal-border neobrutal-shadow-sm mb-6">
+                <span class="material-symbols-outlined filled text-4xl">error</span>
+            </div>
+            <h1 class="font-display text-6xl font-black" th:text="${status} ?: 'Error'">500</h1>
+            <h2 class="font-display text-2xl font-black mt-2" th:text="${error} ?: 'Something went wrong'">Error</h2>
+            <p class="text-on-surface-variant mt-3" th:text="${message} ?: 'An unexpected error occurred.'">Details</p>
+            <a class="nb-btn nb-btn-primary mt-8 inline-flex" th:href="@{/}">
+                <span class="material-symbols-outlined">home</span> Back to Home
+            </a>
+        </section>
+    </div>
+</main>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!-- ============================ SIDEBAR ============================ -->
+<aside th:fragment="sidebar(active)" id="sidebar"
+       class="fixed left-0 top-0 h-full w-[280px] bg-background border-r-[3px] border-black neobrutal-shadow flex flex-col p-6 z-50 transition-transform -translate-x-full md:translate-x-0">
+    <div class="mb-8">
+        <div class="flex items-center gap-3">
+            <div class="bg-primary p-2 neobrutal-border neobrutal-shadow-sm">
+                <span class="material-symbols-outlined filled text-white">menu_book</span>
+            </div>
+            <div>
+                <h1 class="font-display text-2xl font-black leading-none">SLMS</h1>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Empowering Knowledge</p>
+            </div>
+        </div>
+        <div class="mt-6 flex items-center gap-3 p-3 neobrutal-border bg-surface-container">
+            <div class="w-10 h-10 neobrutal-border-2 rounded-full bg-primary-fixed flex items-center justify-center font-display font-black"
+                 th:text="${#authentication.principal.fullName != null ? #strings.substring(#authentication.principal.fullName,0,1) : 'U'}">U</div>
+            <div class="overflow-hidden">
+                <p class="font-bold text-sm truncate" th:text="${#authentication.principal.fullName}">User</p>
+                <p class="text-xs text-secondary" sec:authorize="hasRole('STUDENT')">Student</p>
+                <p class="text-xs text-secondary" sec:authorize="hasRole('LIBRARIAN')">Librarian</p>
+                <p class="text-xs text-secondary" sec:authorize="hasRole('ADMIN')">Administrator</p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="flex flex-col gap-2 flex-grow">
+        <!-- STUDENT -->
+        <th:block sec:authorize="hasRole('STUDENT')">
+            <a th:href="@{/student/dashboard}" th:classappend="${active=='dashboard'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+            <a th:href="@{/student/search}" th:classappend="${active=='search'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">search</span><span>Search Books</span></a>
+            <a th:href="@{/student/history}" th:classappend="${active=='history'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">history</span><span>My History</span></a>
+            <a th:href="@{/student/library}" th:classappend="${active=='library'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">library_books</span><span>Library Status</span></a>
+        </th:block>
+
+        <!-- LIBRARIAN -->
+        <th:block sec:authorize="hasRole('LIBRARIAN')">
+            <a th:href="@{/librarian/dashboard}" th:classappend="${active=='dashboard'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+            <a th:href="@{/librarian/requests}" th:classappend="${active=='requests'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">approval</span><span>Borrow Requests</span></a>
+            <a th:href="@{/librarian/circulation}" th:classappend="${active=='circulation'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">swap_horiz</span><span>Circulation</span></a>
+            <a th:href="@{/librarian/inventory}" th:classappend="${active=='inventory'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">inventory_2</span><span>Inventory</span></a>
+            <a th:href="@{/librarian/readers}" th:classappend="${active=='readers'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">groups</span><span>Current Readers</span></a>
+        </th:block>
+
+        <!-- ADMIN -->
+        <th:block sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/dashboard}" th:classappend="${active=='dashboard'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+            <a th:href="@{/admin/approvals}" th:classappend="${active=='approvals'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">how_to_reg</span><span>Approvals</span></a>
+            <a th:href="@{/admin/users}" th:classappend="${active=='users'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">manage_accounts</span><span>User Management</span></a>
+            <a th:href="@{/admin/settings}" th:classappend="${active=='settings'}? 'active' : ''" class="nav-link">
+                <span class="material-symbols-outlined">settings</span><span>System Settings</span></a>
+        </th:block>
+    </nav>
+
+    <form th:action="@{/logout}" method="post" class="mt-4">
+        <button type="submit" class="nb-btn nb-btn-light w-full text-sm">
+            <span class="material-symbols-outlined">logout</span> Sign Out
+        </button>
+    </form>
+</aside>
+
+<!-- ============================ TOP BAR ============================ -->
+<header th:fragment="topbar(pageTitle)"
+        class="fixed top-0 right-0 left-0 md:left-[280px] h-20 bg-background border-b-[3px] border-black z-40 flex justify-between items-center px-6"
+        style="box-shadow:0 4px 0 0 #000;">
+    <div class="flex items-center gap-4">
+        <button data-sidebar-toggle class="md:hidden neobrutal-border p-1">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        <h2 class="font-display text-xl md:text-2xl font-black" th:text="${pageTitle}">Dashboard</h2>
+    </div>
+    <div class="flex items-center gap-4">
+        <a th:href="@{/notifications}" class="relative p-2 interaction-press" title="Notifications">
+            <span class="material-symbols-outlined">notifications</span>
+            <span th:if="${unreadCount != null and unreadCount > 0}"
+                  class="absolute top-0 right-0 min-w-[18px] h-[18px] px-1 bg-danger text-white text-[10px] font-bold neobrutal-border-2 rounded-full flex items-center justify-center"
+                  th:text="${unreadCount}">0</span>
+        </a>
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 neobrutal-border bg-surface-container">
+            <div class="w-7 h-7 neobrutal-border-2 rounded-full bg-primary-fixed flex items-center justify-center text-xs font-black"
+                 th:text="${#authentication.principal.fullName != null ? #strings.substring(#authentication.principal.fullName,0,1) : 'U'}">U</div>
+            <span class="font-bold text-sm" th:text="${#authentication.principal.fullName}">User</span>
+        </div>
+    </div>
+</header>
+
+</body>
+</html>

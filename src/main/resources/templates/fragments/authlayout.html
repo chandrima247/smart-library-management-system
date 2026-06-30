@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!-- ===================================================================
+     AUTH LAYOUT — minimal, centred, no sidebar (login / register / error).
+     Usage:  <html th:replace="~{fragments/authlayout :: auth(~{::main}, 'Title')}">
+     =================================================================== -->
+<html th:fragment="auth(content, title)" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/head :: head(${title})}"></head>
+<body class="font-body text-on-surface min-h-screen flex flex-col bg-surface">
+    <header class="w-full bg-background border-b-[3px] border-black flex justify-between items-center h-20 px-6"
+            style="box-shadow:0 6px 0 0 #000;">
+        <div class="flex items-center gap-3">
+            <div class="bg-primary p-2 neobrutal-border neobrutal-shadow-sm">
+                <span class="material-symbols-outlined filled text-white">menu_book</span>
+            </div>
+            <div>
+                <h1 class="font-display text-2xl font-black leading-none">SLMS</h1>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Empowering Knowledge</p>
+            </div>
+        </div>
+        <span class="hidden sm:block font-bold text-sm text-secondary">Smart Library Management System</span>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center justify-center px-4 py-12">
+        <div class="w-full max-w-xl">
+            <div th:replace="~{fragments/ui :: flash}"></div>
+        </div>
+        <th:block th:replace="${content}"></th:block>
+    </main>
+
+    <footer class="w-full bg-secondary-container border-t-[3px] border-black py-3 px-6 text-center">
+        <span class="font-bold text-xs">SLMS v1.0.0 · © 2026 Smart Library Management System</span>
+    </footer>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

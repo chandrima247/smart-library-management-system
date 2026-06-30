@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Reusable catalogue card. bv = BookView(book, available). -->
+<div th:fragment="card(bv)" class="bg-white neobrutal-border neobrutal-shadow flex flex-col hover-lift">
+    <div class="h-44 border-b-[3px] border-black bg-surface-container flex items-center justify-center overflow-hidden">
+        <img th:if="${bv.book.coverUrl}" th:src="${bv.book.coverUrl}" alt="cover"
+             class="h-full w-full object-contain p-3"/>
+        <span th:unless="${bv.book.coverUrl}" class="material-symbols-outlined text-6xl text-outline">book_2</span>
+    </div>
+    <div class="p-4 flex flex-col flex-grow">
+        <span th:if="${bv.book.category}" class="nb-badge self-start mb-2" th:text="${bv.book.category}">Category</span>
+        <h4 class="font-display text-lg font-black leading-tight" th:text="${bv.book.title}">Title</h4>
+        <p class="text-sm text-secondary mb-2" th:text="${bv.book.author}">Author</p>
+        <p class="text-xs text-secondary mb-3">
+            <span class="font-bold">ISBN</span> <span th:text="${bv.book.isbn}">000</span>
+        </p>
+        <div class="mt-auto">
+            <p class="text-xs font-bold uppercase tracking-wide mb-2"
+               th:classappend="${bv.availableCount > 0} ? 'text-success' : 'text-danger'"
+               th:text="${bv.availableCount > 0} ? (${bv.availableCount} + ' available') : 'Not available'">available</p>
+
+            <form th:action="@{/student/request}" method="post" class="flex gap-2">
+                <input type="hidden" name="bookId" th:value="${bv.book.id}"/>
+                <select name="borrowType" class="nb-input !py-2 text-sm flex-grow" th:disabled="${bv.availableCount == 0}">
+                    <option value="HOME">Take Home</option>
+                    <option value="READING">Read In-Library</option>
+                </select>
+                <button type="submit" class="nb-btn nb-btn-primary !px-3 !py-2 text-xs" th:disabled="${bv.availableCount == 0}">
+                    Request
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

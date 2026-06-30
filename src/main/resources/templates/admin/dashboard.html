@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'Admin Dashboard', 'dashboard')}">
+<main>
+    <h1 class="font-display text-4xl font-black mb-1">System Overview</h1>
+    <p class="text-secondary mb-8">Health and activity across the library.</p>
+
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
+        <div th:replace="~{fragments/ui :: statCard('Pending Approvals', ${stats.pendingApprovals}, 'how_to_reg', 'bg-warning')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('Total Users', ${stats.totalUsers}, 'group', 'bg-primary-container')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('Titles', ${stats.totalBooks}, 'library_books', 'bg-success')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('Copies', ${stats.totalCopies}, 'inventory_2', 'bg-inverse-surface')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('Active Loans', ${stats.activeLoans}, 'menu_book', 'bg-primary-container')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('Overdue', ${stats.overdueLoans}, 'running_with_errors', 'bg-danger')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('Outstanding Fines', '$' + ${stats.pendingFines}, 'payments', 'bg-danger')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('In Library', ${stats.currentOccupancy}, 'groups', 'bg-success')}"></div>
+    </section>
+
+    <section class="bg-white neobrutal-border neobrutal-shadow p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="font-display text-xl font-black">Awaiting Approval</h2>
+            <a th:href="@{/admin/approvals}" class="text-sm font-bold hover:underline">Manage all</a>
+        </div>
+        <div class="overflow-x-auto" th:if="${!pendingUsers.isEmpty()}">
+            <table class="nb-table">
+                <thead><tr><th>Name</th><th>Role</th><th>Email</th><th class="text-right">Action</th></tr></thead>
+                <tbody>
+                <tr th:each="u : ${pendingUsers}">
+                    <td class="font-bold" th:text="${u.fullName}">Name</td>
+                    <td><span class="nb-badge" th:text="${u.role}">ROLE</span></td>
+                    <td class="text-sm" th:text="${u.email}">email</td>
+                    <td class="text-right">
+                        <div class="inline-flex gap-2">
+                            <form th:action="@{'/admin/approvals/' + ${u.id} + '/approve'}" method="post">
+                                <button class="nb-btn nb-btn-success !px-3 !py-1.5 text-xs">Approve</button>
+                            </form>
+                            <form th:action="@{'/admin/approvals/' + ${u.id} + '/reject'}" method="post">
+                                <button class="nb-btn nb-btn-danger !px-3 !py-1.5 text-xs">Reject</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${pendingUsers.isEmpty()}" th:replace="~{fragments/ui :: empty('No registrations awaiting approval.')}"></div>
+    </section>
+</main>
+</html>

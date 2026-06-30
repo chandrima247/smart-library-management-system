@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'Current Readers', 'readers')}">
+<main>
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+        <h1 class="font-display text-3xl font-black">Current Readers</h1>
+        <div class="flex items-center gap-3 bg-white neobrutal-border neobrutal-shadow-sm px-4 py-2">
+            <span class="w-3 h-3 bg-success rounded-full border border-black"></span>
+            <span class="font-bold" th:text="${occupancy} + ' / ' + ${capacity} + ' seated'">0 / 100</span>
+            <span class="text-secondary">·</span>
+            <span class="font-bold text-success" th:text="${availableSeats} + ' free'">free</span>
+        </div>
+    </div>
+
+    <div class="bg-white neobrutal-border neobrutal-shadow overflow-x-auto" th:if="${!readers.isEmpty()}">
+        <table class="nb-table">
+            <thead><tr><th>Reader</th><th>Member Code</th><th>Area</th><th>Time In Library</th></tr></thead>
+            <tbody>
+            <tr th:each="s : ${readers}">
+                <td class="font-bold" th:text="${s.student.fullName}">Reader</td>
+                <td class="text-sm" th:text="${s.student.memberCode}">code</td>
+                <td class="text-sm" th:text="${s.area}">area</td>
+                <td><span class="nb-badge bg-primary-fixed" th:text="${s.minutesElapsed} + ' min'">0 min</span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${readers.isEmpty()}" th:replace="~{fragments/ui :: empty('The reading hall is empty right now.')}"></div>
+</main>
+</html>

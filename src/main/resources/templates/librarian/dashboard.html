@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'Librarian Dashboard', 'dashboard')}">
+<main>
+    <h1 class="font-display text-4xl font-black mb-1">Circulation Desk</h1>
+    <p class="text-secondary mb-8">Overview of requests, loans and reading-hall activity.</p>
+
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-10">
+        <div th:replace="~{fragments/ui :: statCard('Pending Requests', ${stats.pendingRequests}, 'approval', 'bg-warning')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('Active Loans', ${stats.activeLoans}, 'menu_book', 'bg-primary-container')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('Overdue', ${stats.overdueLoans}, 'running_with_errors', 'bg-danger')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('In Library', ${stats.currentOccupancy}, 'groups', 'bg-success')}"></div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+        <div class="bg-white neobrutal-border neobrutal-shadow p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="font-display text-xl font-black">Latest Requests</h2>
+                <a th:href="@{/librarian/requests}" class="text-sm font-bold hover:underline">View all</a>
+            </div>
+            <ul class="space-y-3" th:if="${!pendingRequests.isEmpty()}">
+                <li th:each="r : ${pendingRequests}" class="flex items-center justify-between gap-3 p-3 neobrutal-border bg-surface">
+                    <div class="min-w-0">
+                        <p class="font-bold truncate" th:text="${r.book.title}">Title</p>
+                        <p class="text-xs text-secondary" th:text="${r.student.fullName} + ' · ' + ${r.borrowType}">student</p>
+                    </div>
+                    <form th:action="@{'/librarian/requests/' + ${r.id} + '/approve'}" method="post">
+                        <button class="nb-btn nb-btn-success !px-3 !py-1.5 text-xs">Approve</button>
+                    </form>
+                </li>
+            </ul>
+            <div th:if="${pendingRequests.isEmpty()}" th:replace="~{fragments/ui :: empty('No pending requests.')}"></div>
+        </div>
+
+        <div class="bg-white neobrutal-border neobrutal-shadow p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="font-display text-xl font-black">Overdue Loans</h2>
+                <a th:href="@{/librarian/circulation}" class="text-sm font-bold hover:underline">Circulation</a>
+            </div>
+            <ul class="space-y-3" th:if="${!overdueLoans.isEmpty()}">
+                <li th:each="l : ${overdueLoans}" class="flex items-center justify-between gap-3 p-3 neobrutal-border bg-surface">
+                    <div class="min-w-0">
+                        <p class="font-bold truncate" th:text="${l.copy.book.title}">Title</p>
+                        <p class="text-xs text-secondary" th:text="${l.student.fullName} + ' · due ' + ${l.dueDate}">due</p>
+                    </div>
+                    <span class="nb-badge bg-danger text-white">OVERDUE</span>
+                </li>
+            </ul>
+            <div th:if="${overdueLoans.isEmpty()}" th:replace="~{fragments/ui :: empty('Nothing overdue.')}"></div>
+        </div>
+    </section>
+</main>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'System Settings', 'settings')}">
+<main>
+    <h1 class="font-display text-3xl font-black mb-2">System Settings</h1>
+    <p class="text-secondary mb-8">Current configuration (edit in <code>application.properties</code>).</p>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <div class="bg-white neobrutal-border neobrutal-shadow p-6">
+            <h2 class="font-display text-lg font-black mb-4">Circulation</h2>
+            <dl class="space-y-3 text-sm">
+                <div class="flex justify-between"><dt class="text-secondary">Home loan period</dt><dd class="font-bold" th:text="${circulation.homeLoanDays} + ' days'">14 days</dd></div>
+                <div class="flex justify-between"><dt class="text-secondary">Max active loans</dt><dd class="font-bold" th:text="${circulation.maxActiveLoans}">5</dd></div>
+                <div class="flex justify-between"><dt class="text-secondary">Fine per day</dt><dd class="font-bold" th:text="'$' + ${circulation.finePerDay}">$2.00</dd></div>
+            </dl>
+        </div>
+        <div class="bg-white neobrutal-border neobrutal-shadow p-6">
+            <h2 class="font-display text-lg font-black mb-4">Library</h2>
+            <dl class="space-y-3 text-sm">
+                <div class="flex justify-between"><dt class="text-secondary">Hall name</dt><dd class="font-bold" th:text="${library.name}">Hall</dd></div>
+                <div class="flex justify-between"><dt class="text-secondary">Capacity</dt><dd class="font-bold" th:text="${library.readingHallCapacity}">100</dd></div>
+            </dl>
+        </div>
+        <div class="bg-white neobrutal-border neobrutal-shadow p-6">
+            <h2 class="font-display text-lg font-black mb-4">ISBN Lookup</h2>
+            <dl class="space-y-3 text-sm">
+                <div class="flex justify-between"><dt class="text-secondary">Google Books</dt>
+                    <dd><span class="nb-badge" th:classappend="${googleBooks.enabled} ? 'bg-success text-white' : 'bg-secondary-container'"
+                              th:text="${googleBooks.enabled} ? 'Enabled' : 'Disabled'">Enabled</span></dd></div>
+                <div class="flex justify-between"><dt class="text-secondary">API key</dt>
+                    <dd class="font-bold" th:text="${#strings.isEmpty(googleBooks.apiKey)} ? 'Anonymous' : 'Configured'">Anonymous</dd></div>
+            </dl>
+        </div>
+    </section>
+</main>
+</html>

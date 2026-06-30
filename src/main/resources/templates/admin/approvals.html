@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'Approvals', 'approvals')}">
+<main>
+    <h1 class="font-display text-3xl font-black mb-6">Registration Approvals</h1>
+
+    <div class="bg-white neobrutal-border neobrutal-shadow overflow-x-auto" th:if="${!users.isEmpty()}">
+        <table class="nb-table">
+            <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Department</th><th>Requested</th><th class="text-right">Action</th></tr></thead>
+            <tbody>
+            <tr th:each="u : ${users}">
+                <td>
+                    <p class="font-bold" th:text="${u.fullName}">Name</p>
+                    <p class="text-xs text-secondary" th:text="${u.email}">email</p>
+                </td>
+                <td class="text-sm" th:text="${u.username}">username</td>
+                <td><span class="nb-badge" th:text="${u.role}">ROLE</span></td>
+                <td class="text-sm" th:text="${u.department} ?: '—'">dept</td>
+                <td class="text-sm" th:text="${u.createdDate}">date</td>
+                <td class="text-right">
+                    <div class="inline-flex gap-2">
+                        <form th:action="@{'/admin/approvals/' + ${u.id} + '/approve'}" method="post">
+                            <button class="nb-btn nb-btn-success !px-3 !py-1.5 text-xs">Approve</button>
+                        </form>
+                        <form th:action="@{'/admin/approvals/' + ${u.id} + '/reject'}" method="post"
+                              data-confirm="Reject this registration?">
+                            <button class="nb-btn nb-btn-danger !px-3 !py-1.5 text-xs">Reject</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${users.isEmpty()}" th:replace="~{fragments/ui :: empty('Nothing to approve right now.')}"></div>
+
+    <div th:if="${pageInfo.totalPages > 1}" class="flex justify-center items-center gap-3 mt-6">
+        <a th:if="${!pageInfo.first}" class="nb-btn nb-btn-light" th:href="@{/admin/approvals(page=${pageInfo.number - 1})}">Prev</a>
+        <span class="font-bold" th:text="'Page ' + (${pageInfo.number} + 1) + ' of ' + ${pageInfo.totalPages}">Page</span>
+        <a th:if="${!pageInfo.last}" class="nb-btn nb-btn-light" th:href="@{/admin/approvals(page=${pageInfo.number + 1})}">Next</a>
+    </div>
+</main>
+</html>

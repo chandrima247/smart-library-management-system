@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'Library Status', 'library')}">
+<main>
+    <h1 class="font-display text-3xl font-black mb-6">Library Status</h1>
+
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+        <div class="lg:col-span-8 bg-surface neobrutal-border neobrutal-shadow p-8">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="w-3 h-3 bg-success rounded-full border border-black"></span>
+                <span class="text-xs font-bold text-success uppercase tracking-wider">Live Occupancy</span>
+            </div>
+            <h2 class="font-display text-3xl font-black mb-6" th:text="${hallName}">Reading Hall</h2>
+
+            <div class="flex justify-between items-end mb-2">
+                <span class="font-bold" th:text="${occupancy} + ' seated'">0 seated</span>
+                <span class="font-bold" th:text="${availableSeats} + ' free of ' + ${capacity}">free</span>
+            </div>
+            <div class="w-full h-8 bg-surface-container-high neobrutal-border overflow-hidden">
+                <div class="h-full bg-primary border-r-[3px] border-black"
+                     th:style="'width:' + (${capacity > 0} ? ${occupancy * 100 / capacity} : 0) + '%'"></div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-4 bg-white neobrutal-border neobrutal-shadow p-8 flex flex-col items-center justify-center text-center">
+            <span class="material-symbols-outlined text-5xl mb-3"
+                  th:classappend="${checkedIn} ? 'text-success' : 'text-primary'"
+                  th:text="${checkedIn} ? 'check_circle' : 'qr_code_scanner'">qr_code_scanner</span>
+            <p class="font-bold mb-4" th:text="${checkedIn} ? 'You are checked in.' : 'You are not checked in.'">status</p>
+            <form th:action="@{${checkedIn} ? '/student/checkout' : '/student/checkin'}" method="post" class="w-full">
+                <button type="submit" class="nb-btn w-full"
+                        th:classappend="${checkedIn} ? 'nb-btn-danger' : 'nb-btn-primary'"
+                        th:text="${checkedIn} ? 'Check Out' : 'Check In'">Check In</button>
+            </form>
+        </div>
+    </section>
+</main>
+</html>

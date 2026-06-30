@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'My History', 'history')}">
+<main>
+    <h1 class="font-display text-3xl font-black mb-6">My History</h1>
+
+    <!-- Requests -->
+    <section class="mb-10">
+        <h2 class="font-display text-xl font-black mb-3">Borrow Requests</h2>
+        <div class="bg-white neobrutal-border neobrutal-shadow overflow-x-auto" th:if="${!requests.isEmpty()}">
+            <table class="nb-table">
+                <thead><tr><th>Title</th><th>Type</th><th>Status</th><th>Note</th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="r : ${requests}">
+                    <td class="font-bold" th:text="${r.book.title}">Title</td>
+                    <td><span class="nb-badge" th:text="${r.borrowType}">HOME</span></td>
+                    <td>
+                        <span class="nb-badge"
+                              th:classappend="${r.status.name() == 'APPROVED' or r.status.name() == 'FULFILLED'} ? 'bg-success text-white'
+                                            : (${r.status.name() == 'REJECTED'} ? 'bg-danger text-white'
+                                            : (${r.status.name() == 'PENDING'} ? 'bg-warning text-black' : ''))"
+                              th:text="${r.status}">PENDING</span>
+                    </td>
+                    <td class="text-sm text-secondary" th:text="${r.decisionNote} ?: '—'">—</td>
+                    <td>
+                        <form th:if="${r.pending}" th:action="@{'/student/request/' + ${r.id} + '/cancel'}" method="post"
+                              data-confirm="Cancel this request?">
+                            <button class="nb-btn nb-btn-light !px-3 !py-1.5 text-xs">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${requests.isEmpty()}" th:replace="~{fragments/ui :: empty('No requests yet.')}"></div>
+    </section>
+
+    <!-- Loans -->
+    <section class="mb-10">
+        <h2 class="font-display text-xl font-black mb-3">Loan History</h2>
+        <div class="bg-white neobrutal-border neobrutal-shadow overflow-x-auto" th:if="${!loans.isEmpty()}">
+            <table class="nb-table">
+                <thead><tr><th>Title</th><th>Type</th><th>Issued</th><th>Due</th><th>Status</th></tr></thead>
+                <tbody>
+                <tr th:each="l : ${loans}">
+                    <td class="font-bold" th:text="${l.copy.book.title}">Title</td>
+                    <td><span class="nb-badge" th:text="${l.borrowType}">HOME</span></td>
+                    <td class="text-sm" th:text="${l.issuedDate}">date</td>
+                    <td class="text-sm" th:text="${l.dueDate} ?: '—'">—</td>
+                    <td>
+                        <span class="nb-badge"
+                              th:classappend="${l.status.name() == 'RETURNED'} ? 'bg-secondary-container'
+                                            : (${l.status.name() == 'OVERDUE'} ? 'bg-danger text-white' : 'bg-success text-white')"
+                              th:text="${l.status}">ACTIVE</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${loans.isEmpty()}" th:replace="~{fragments/ui :: empty('No loans yet.')}"></div>
+    </section>
+
+    <!-- Fines -->
+    <section>
+        <h2 class="font-display text-xl font-black mb-3">Fines</h2>
+        <div class="bg-white neobrutal-border neobrutal-shadow overflow-x-auto" th:if="${!fines.isEmpty()}">
+            <table class="nb-table">
+                <thead><tr><th>Reason</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>
+                <tr th:each="f : ${fines}">
+                    <td th:text="${f.reason}">Reason</td>
+                    <td class="font-bold" th:text="'$' + ${f.amount}">$0</td>
+                    <td>
+                        <span class="nb-badge"
+                              th:classappend="${f.status.name() == 'PENDING'} ? 'bg-danger text-white' : 'bg-success text-white'"
+                              th:text="${f.status}">PENDING</span>
+                    </td>
+                    <td class="text-sm" th:text="${f.createdDate}">date</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${fines.isEmpty()}" th:replace="~{fragments/ui :: empty('No fines. Keep it up!')}"></div>
+    </section>
+</main>
+</html>

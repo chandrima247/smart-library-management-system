@@ -1,0 +1,6 @@
+# Keep shell scripts LF so the Maven wrapper works on Linux/CI/containers.
+* text=auto
+*.sh text eol=lf
+mvnw text eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf

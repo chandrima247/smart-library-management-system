@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/authlayout :: auth(~{::main}, 'Sign In')}">
+<main>
+    <div class="w-full max-w-md space-y-6">
+
+        <div th:if="${param.error}" class="nb-alert bg-danger text-white p-4 flex items-center gap-3">
+            <span class="material-symbols-outlined filled">error</span>
+            <p class="font-bold">Invalid credentials, or your account is not yet approved.</p>
+        </div>
+        <div th:if="${param.logout}" class="nb-alert bg-success text-white p-4 flex items-center gap-3">
+            <span class="material-symbols-outlined filled">check_circle</span>
+            <p class="font-bold">You have been signed out.</p>
+        </div>
+        <div th:if="${param.expired}" class="nb-alert bg-warning text-black p-4 flex items-center gap-3">
+            <span class="material-symbols-outlined filled">schedule</span>
+            <p class="font-bold">Your session expired. Please sign in again.</p>
+        </div>
+
+        <section class="bg-background neobrutal-border neobrutal-shadow p-8">
+            <div class="mb-6">
+                <h2 class="font-display text-3xl font-black">Sign In</h2>
+                <p class="text-on-surface-variant text-sm mt-1">Enter your institutional credentials to continue.</p>
+            </div>
+
+            <form th:action="@{/login}" method="post" class="space-y-5">
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold uppercase tracking-wider text-secondary" for="username">Username or Email</label>
+                    <input class="nb-input" id="username" name="username" type="text"
+                           placeholder="e.g. student" autofocus required/>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-xs font-bold uppercase tracking-wider text-secondary" for="password">Password</label>
+                    <input class="nb-input" id="password" name="password" type="password"
+                           placeholder="••••••••" required/>
+                </div>
+                <button class="nb-btn nb-btn-primary w-full py-4" type="submit">
+                    Sign In to Dashboard
+                </button>
+            </form>
+
+            <div class="mt-6 pt-6 border-t-[3px] border-black border-dashed text-center">
+                <p class="text-sm text-secondary mb-2">New to the library system?</p>
+                <a class="font-bold text-primary inline-flex items-center gap-1 hover:underline" th:href="@{/register}">
+                    Request Access Credentials <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="bg-surface-container neobrutal-border neobrutal-shadow-sm p-4 text-sm">
+            <p class="font-bold uppercase text-xs tracking-wider mb-2 text-secondary">Demo Accounts</p>
+            <ul class="space-y-1 text-on-surface-variant">
+                <li><b>admin</b> / admin123 — Administrator</li>
+                <li><b>librarian</b> / librarian123 — Librarian</li>
+                <li><b>student</b> / student123 — Student</li>
+            </ul>
+        </div>
+    </div>
+</main>
+</html>

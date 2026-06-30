@@ -1,0 +1,127 @@
+/* ===========================================================================
+   SLMS Neobrutalist design system — shared primitives.
+   Tailwind utility classes carry most styling; this file holds the reusable
+   "hard depth" mechanics (thick borders, hard shadows, press interaction) that
+   the design language mandates.
+   =========================================================================== */
+
+:root {
+    --nb-black: #000000;
+}
+
+body {
+    background-color: #ffffff;
+    color: #111111;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.material-symbols-outlined.filled {
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+/* --- Hard depth --- */
+.neobrutal-border    { border: 3px solid var(--nb-black); }
+.neobrutal-border-2  { border: 2px solid var(--nb-black); }
+.neobrutal-shadow    { box-shadow: 6px 6px 0 0 var(--nb-black); }
+.neobrutal-shadow-sm { box-shadow: 4px 4px 0 0 var(--nb-black); }
+.neobrutal-shadow-lg { box-shadow: 8px 8px 0 0 var(--nb-black); }
+
+/* Physical "press" feedback for buttons / interactive cards. */
+.active-press:active,
+.interaction-press:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 0 var(--nb-black) !important;
+}
+
+/* Lift on hover for cards. */
+.hover-lift { transition: transform .15s ease; }
+.hover-lift:hover { transform: translate(-2px, -2px); }
+
+/* Inputs: square, thick-bordered, blue focus. */
+.nb-input {
+    width: 100%;
+    background: #faf8ff;
+    border: 3px solid var(--nb-black);
+    padding: .75rem 1rem;
+    font-weight: 500;
+    outline: none;
+    transition: border-color .15s ease;
+}
+.nb-input:focus { border-color: #0060ff; }
+.nb-input::placeholder { color: #808080; }
+
+/* Primary / secondary buttons. */
+.nb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    border: 3px solid var(--nb-black);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: .85rem 1.25rem;
+    box-shadow: 4px 4px 0 0 var(--nb-black);
+    transition: transform .1s ease, box-shadow .1s ease, background-color .15s ease;
+    cursor: pointer;
+}
+.nb-btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 0 var(--nb-black); }
+.nb-btn-primary { background: #0060ff; color: #fff; }
+.nb-btn-primary:hover { background: #004bca; }
+.nb-btn-light { background: #fff; color: #111; }
+.nb-btn-light:hover { background: #e1e1ef; }
+.nb-btn-danger { background: #ff5252; color: #fff; }
+.nb-btn-success { background: #34c759; color: #fff; }
+
+/* Status pills. */
+.nb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    border: 2px solid var(--nb-black);
+    border-radius: 100px;
+    padding: .15rem .6rem;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+/* Data tables: no zebra, thick row dividers. */
+.nb-table { width: 100%; border-collapse: collapse; }
+.nb-table thead th {
+    background: #fcfcfc;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: .85rem 1rem;
+    border-bottom: 3px solid var(--nb-black);
+}
+.nb-table tbody td { padding: .85rem 1rem; border-bottom: 3px solid var(--nb-black); }
+.nb-table tbody tr:last-child td { border-bottom: none; }
+
+/* Sidebar active link. */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem;
+    color: #5e5e5e;
+    font-weight: 700;
+    font-size: 14px;
+    transition: background-color .15s ease, color .15s ease;
+}
+.nav-link:hover { background: #e7e7f4; color: #111; }
+.nav-link.active {
+    background: #004bca;
+    color: #fff;
+    border: 3px solid var(--nb-black);
+    box-shadow: 4px 4px 0 0 var(--nb-black);
+}
+
+/* Flash banners reuse semantic fills with the hard border. */
+.nb-alert { border: 3px solid var(--nb-black); box-shadow: 6px 6px 0 0 var(--nb-black); }

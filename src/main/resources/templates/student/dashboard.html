@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'Dashboard', 'dashboard')}">
+<main>
+    <section class="mb-8">
+        <h1 class="font-display text-4xl md:text-5xl font-black tracking-tight"
+            th:text="'Hello, ' + ${#authentication.principal.fullName} + '!'">Hello!</h1>
+        <p class="text-secondary mt-1">Here's your library status today.</p>
+    </section>
+
+    <!-- Stats -->
+    <section class="grid grid-cols-1 sm:grid-cols-3 gap-gutter mb-10">
+        <div th:replace="~{fragments/ui :: statCard('Books Borrowed', ${stats.activeLoans}, 'menu_book', 'bg-primary-container')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('Pending Requests', ${stats.pendingRequests}, 'hourglass_top', 'bg-warning')}"></div>
+        <div th:replace="~{fragments/ui :: statCard('Outstanding Fines', '$' + ${stats.pendingFines}, 'payments', 'bg-danger')}"></div>
+    </section>
+
+    <!-- Occupancy + Quick action -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-10">
+        <div class="lg:col-span-8 bg-surface neobrutal-border neobrutal-shadow p-6">
+            <div class="flex justify-between items-center mb-5">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="w-3 h-3 bg-success rounded-full border border-black"></span>
+                        <span class="text-xs font-bold text-success uppercase tracking-wider">Live Status</span>
+                    </div>
+                    <h3 class="font-display text-2xl font-black" th:text="${hallName}">Reading Hall</h3>
+                </div>
+                <div class="text-right">
+                    <p class="font-display text-2xl font-black" th:text="${availableSeats} + ' / ' + ${capacity}">0 / 100</p>
+                    <p class="text-sm text-secondary">Seats Available</p>
+                </div>
+            </div>
+            <div class="w-full h-7 bg-surface-container-high neobrutal-border overflow-hidden">
+                <div class="h-full bg-primary border-r-[3px] border-black"
+                     th:style="'width:' + (${capacity > 0} ? ${occupancy * 100 / capacity} : 0) + '%'"></div>
+            </div>
+        </div>
+        <div class="lg:col-span-4">
+            <form th:action="@{${checkedIn} ? '/student/checkout' : '/student/checkin'}" method="post" class="h-full">
+                <button type="submit"
+                        th:classappend="${checkedIn} ? 'nb-btn-danger' : 'nb-btn-primary'"
+                        class="nb-btn w-full h-full flex-col gap-3 py-8 text-lg">
+                    <span class="material-symbols-outlined text-4xl" th:text="${checkedIn} ? 'logout' : 'qr_code_scanner'">qr_code_scanner</span>
+                    <span th:text="${checkedIn} ? 'Check Out' : 'Arrival Check-In'">Check-In</span>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Active loans -->
+    <section class="mb-10" th:if="${!activeLoans.isEmpty()}">
+        <h2 class="font-display text-2xl font-black mb-4">Your Active Loans</h2>
+        <div class="bg-white neobrutal-border neobrutal-shadow overflow-x-auto">
+            <table class="nb-table">
+                <thead><tr><th>Title</th><th>Type</th><th>Due</th><th>Status</th></tr></thead>
+                <tbody>
+                <tr th:each="loan : ${activeLoans}">
+                    <td class="font-bold" th:text="${loan.copy.book.title}">Title</td>
+                    <td><span class="nb-badge" th:text="${loan.borrowType}">HOME</span></td>
+                    <td th:text="${loan.dueDate} ?: '—'">—</td>
+                    <td>
+                        <span class="nb-badge"
+                              th:classappend="${loan.status.name() == 'OVERDUE'} ? 'bg-danger text-white' : 'bg-success text-white'"
+                              th:text="${loan.status}">ACTIVE</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Recommended / recent -->
+    <section>
+        <div class="flex justify-between items-end mb-4">
+            <h2 class="font-display text-2xl font-black">Browse the Catalogue</h2>
+            <a th:href="@{/student/search}" class="font-bold text-sm hover:underline inline-flex items-center gap-1">
+                View All <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+            <th:block th:each="bv : ${recommended}">
+                <div th:replace="~{student/_bookcard :: card(${bv})}"></div>
+            </th:block>
+        </div>
+        <div th:if="${recommended.isEmpty()}" th:replace="~{fragments/ui :: empty('No books in the catalogue yet.')}"></div>
+    </section>
+</main>
+</html>

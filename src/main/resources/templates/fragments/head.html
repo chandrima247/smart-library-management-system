@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title th:text="${title} + ' · SLMS'">SLMS</title>
+
+    <!-- Tailwind (CDN) with the SLMS Neobrutalist design tokens -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Inter:wght@400..900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script th:inline="none">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#faf8ff", "surface-alt": "#FCFCFC",
+                        "surface-container": "#ecedfa", "surface-container-high": "#e7e7f4",
+                        "surface-container-highest": "#e1e1ef", "surface-variant": "#e1e1ef",
+                        "on-surface": "#191b24", "on-surface-variant": "#424656",
+                        "outline": "#737687", "outline-variant": "#c2c6d9",
+                        "primary": "#004bca", "primary-container": "#0060ff",
+                        "on-primary": "#ffffff", "on-primary-container": "#f0f1ff",
+                        "primary-fixed": "#dbe1ff", "primary-fixed-dim": "#b4c5ff",
+                        "on-primary-fixed-variant": "#003da9",
+                        "secondary": "#5e5e5e", "secondary-container": "#e2e2e2",
+                        "on-secondary-container": "#646464",
+                        "tertiary": "#9e2e00", "tertiary-container": "#c83d02",
+                        "text-primary": "#111111", "background": "#FFFFFF",
+                        "inverse-surface": "#2e303a",
+                        "success": "#34C759", "warning": "#FFD500", "danger": "#FF5252",
+                        "error": "#ba1a1a", "gray-inactive": "#808080"
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "headline": ["Space Grotesk", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                    spacing: { "gutter": "24px", "base": "8px" }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" th:href="@{/css/neobrutal.css}"/>
+</head>
+<body></body>
+</html>

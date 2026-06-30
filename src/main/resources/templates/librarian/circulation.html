@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: dashboard(~{::main}, 'Circulation', 'circulation')}">
+<main>
+    <h1 class="font-display text-3xl font-black mb-6">Circulation</h1>
+
+    <!-- Ready to issue -->
+    <section class="mb-10">
+        <h2 class="font-display text-xl font-black mb-3">Approved · Ready to Issue</h2>
+        <div class="bg-white neobrutal-border neobrutal-shadow overflow-x-auto" th:if="${!approvedRequests.isEmpty()}">
+            <table class="nb-table">
+                <thead><tr><th>Student</th><th>Title</th><th>Type</th><th class="text-right">Action</th></tr></thead>
+                <tbody>
+                <tr th:each="r : ${approvedRequests}">
+                    <td class="font-bold" th:text="${r.student.fullName}">Student</td>
+                    <td th:text="${r.book.title}">Title</td>
+                    <td><span class="nb-badge" th:text="${r.borrowType}">HOME</span></td>
+                    <td class="text-right">
+                        <form th:action="@{'/librarian/requests/' + ${r.id} + '/issue'}" method="post">
+                            <button class="nb-btn nb-btn-primary !px-4 !py-1.5 text-xs">Issue</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${approvedRequests.isEmpty()}" th:replace="~{fragments/ui :: empty('No approved requests waiting to be issued.')}"></div>
+    </section>
+
+    <!-- Active loans -->
+    <section>
+        <h2 class="font-display text-xl font-black mb-3">Active Loans</h2>
+        <div class="bg-white neobrutal-border neobrutal-shadow overflow-x-auto" th:if="${!loans.isEmpty()}">
+            <table class="nb-table">
+                <thead><tr><th>Student</th><th>Title</th><th>Accession</th><th>Due</th><th>Status</th><th class="text-right">Action</th></tr></thead>
+                <tbody>
+                <tr th:each="l : ${loans}">
+                    <td class="font-bold" th:text="${l.student.fullName}">Student</td>
+                    <td th:text="${l.copy.book.title}">Title</td>
+                    <td class="text-sm" th:text="${l.copy.accessionNumber}">ACC</td>
+                    <td class="text-sm" th:text="${l.dueDate} ?: 'reading'">—</td>
+                    <td>
+                        <span class="nb-badge"
+                              th:classappend="${l.status.name() == 'OVERDUE'} ? 'bg-danger text-white' : 'bg-success text-white'"
+                              th:text="${l.status}">ACTIVE</span>
+                    </td>
+                    <td class="text-right">
+                        <form th:action="@{'/librarian/loans/' + ${l.id} + '/return'}" method="post">
+                            <button class="nb-btn nb-btn-light !px-4 !py-1.5 text-xs">Return</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${loans.isEmpty()}" th:replace="~{fragments/ui :: empty('No active loans.')}"></div>
+
+        <div th:if="${pageInfo.totalPages > 1}" class="flex justify-center items-center gap-3 mt-6">
+            <a th:if="${!pageInfo.first}" class="nb-btn nb-btn-light" th:href="@{/librarian/circulation(page=${pageInfo.number - 1})}">Prev</a>
+            <span class="font-bold" th:text="'Page ' + (${pageInfo.number} + 1) + ' of ' + ${pageInfo.totalPages}">Page</span>
+            <a th:if="${!pageInfo.last}" class="nb-btn nb-btn-light" th:href="@{/librarian/circulation(page=${pageInfo.number + 1})}">Next</a>
+        </div>
+    </section>
+</main>
+</html>

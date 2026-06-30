@@ -1,0 +1,19 @@
+# Render.com Blueprint — free, zero-cost deployment of SLMS.
+# Deploy: push to GitHub, then on https://render.com choose
+# "New +" → "Blueprint" → pick this repo. Render reads this file.
+#
+# Notes on the free plan:
+#  - The service sleeps after ~15 min of inactivity and cold-starts on the next
+#    request (first hit takes ~30s).
+#  - The filesystem is ephemeral, so the embedded H2 database resets on each
+#    deploy/restart; the built-in seeder repopulates demo data automatically.
+services:
+  - type: web
+    name: slms
+    runtime: docker
+    plan: free
+    healthCheckPath: /login
+    autoDeploy: true
+    envVars:
+      - key: JAVA_TOOL_OPTIONS
+        value: "-XX:MaxRAMPercentage=70 -XX:+UseSerialGC"
