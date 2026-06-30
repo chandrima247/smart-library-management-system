@@ -1,10 +1,7 @@
 # ---- Build stage: compile and package with Maven ----
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
-# Cache dependencies first
 COPY pom.xml .
-RUN mvn -B -q dependency:go-offline
-# Build
 COPY src ./src
 RUN mvn -B -DskipTests clean package
 
