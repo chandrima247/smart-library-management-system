@@ -71,21 +71,43 @@ java -jar target\slms-1.0.0.jar --spring.profiles.active=mysql
 mvnw.cmd test
 ```
 
-## Deploy for free (Render)
+## Deploy for free, always-on (Render + cloud MySQL)
 
-The repo includes a `Dockerfile` and a `render.yaml` blueprint for a **free** deployment on [Render](https://render.com):
+The repo includes a `Dockerfile` and a `render.yaml` blueprint. The app runs on
+**Render's free tier**; data lives in a **free cloud MySQL** so it persists across
+redeploys and is shared by every device that opens the public URL.
 
-1. Push this repo to GitHub (already done if you're reading this on GitHub).
-2. Sign in to Render → **New +** → **Blueprint** → connect this repository.
-3. Render reads `render.yaml`, builds the Docker image, and deploys. Open the generated `*.onrender.com` URL.
+### Step 1 — Create a free MySQL database (Aiven)
 
-Free-plan caveats: the service sleeps after ~15 min idle (first request then cold-starts in ~30s), and the filesystem is ephemeral so the H2 database resets on redeploy — the seeder repopulates demo data automatically. For persistent data, attach a managed database and run with the `mysql`/Postgres profile.
+1. Sign up at <https://aiven.io> (free, no card) → **Create service** → **MySQL** →
+   **Free plan** → pick a cloud/region → create.
+2. Open the service overview and note: **Host**, **Port**, **Database name**
+   (often `defaultdb`), **User**, **Password**. SSL is required (already handled).
 
-Any Docker host works the same way:
+### Step 2 — Deploy the app on Render
+
+1. Sign in at <https://render.com> (log in with GitHub).
+2. **New +** → **Blueprint** → select this repository → **Apply**.
+3. When prompted, fill in the environment variables with your Aiven values:
+   `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`.
+   (`SPRING_PROFILES_ACTIVE=mysql` and `DB_SSL_MODE=REQUIRED` are preset.)
+4. Render builds the Docker image and deploys. Open the generated
+   `https://slms-xxxx.onrender.com` URL — usable from any device.
+
+> Tip: to see it live immediately on H2 first, deploy without the `DB_*` vars and
+> remove `SPRING_PROFILES_ACTIVE`; add MySQL later for persistence.
+
+Free-plan note: the service sleeps after ~15 min idle and cold-starts (~30s) on the
+next request. The MySQL data is unaffected by that.
+
+### Any Docker host
 
 ```bat
 docker build -t slms .
-docker run -p 8080:8080 slms
+docker run -p 8080:8080 ^
+  -e SPRING_PROFILES_ACTIVE=mysql -e DB_SSL_MODE=REQUIRED ^
+  -e DB_HOST=... -e DB_PORT=... -e DB_NAME=... -e DB_USER=... -e DB_PASSWORD=... ^
+  slms
 ```
 
 ## Project structure

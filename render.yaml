@@ -1,12 +1,15 @@
-# Render.com Blueprint — free, zero-cost deployment of SLMS.
-# Deploy: push to GitHub, then on https://render.com choose
-# "New +" → "Blueprint" → pick this repo. Render reads this file.
+# Render.com Blueprint — free, always-on deployment of SLMS backed by cloud MySQL.
 #
-# Notes on the free plan:
-#  - The service sleeps after ~15 min of inactivity and cold-starts on the next
-#    request (first hit takes ~30s).
-#  - The filesystem is ephemeral, so the embedded H2 database resets on each
-#    deploy/restart; the built-in seeder repopulates demo data automatically.
+# Deploy:
+#   1. Create a free MySQL database (e.g. Aiven free plan) and note its
+#      host / port / database / user / password.
+#   2. On https://render.com  ->  New +  ->  Blueprint  ->  pick this repo.
+#   3. When prompted, fill in the DB_* environment variables below with your
+#      MySQL connection details, then Apply.
+#
+# Free-plan note: the web service sleeps after ~15 min idle and cold-starts on
+# the next request (~30s). Data lives in your external MySQL, so it persists
+# across redeploys and is shared by every device that opens the public URL.
 services:
   - type: web
     name: slms
@@ -15,5 +18,20 @@ services:
     healthCheckPath: /login
     autoDeploy: true
     envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: mysql
+      - key: DB_SSL_MODE
+        value: REQUIRED
       - key: JAVA_TOOL_OPTIONS
         value: "-XX:MaxRAMPercentage=70 -XX:+UseSerialGC"
+      # Fill these in the Render dashboard (kept out of git):
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
